@@ -1,0 +1,24 @@
+on:
+  push:
+    branches: ["main", "wip"]
+    paths-ignore: "backend/**"
+
+jobs:
+  update-prod:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update the stack in portainer with webhook
+        uses: distributhor/workflow-webhook@v3.0.7
+        with:
+          webhook_type: "form-urlencoded"
+          webhook_url: ${{ secrets.WEBHOOK_URL_PROD }}
+  update-beta:
+    if: github.ref_name == 'wip'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update the stack in portainer with webhook
+        uses: distributhor/workflow-webhook@v3.0.7
+        with:
+          webhook_type: "form-urlencoded"
+          webhook_url: ${{ secrets.WEBHOOK_URL_WIP }}
