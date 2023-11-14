@@ -7,7 +7,7 @@ import {
   Progress,
 } from "@chakra-ui/react";
 
-import Countdown from "./components/Countdown";
+import Countdown from "@/components/Countdown";
 import { Varela_Round } from "next/font/google";
 const varela = Varela_Round({
   weight: "400",
