@@ -42,7 +42,7 @@ export default function Home() {
       </Heading>
       <Flex direction={"column"} gap={3}>
         <Heading as={"h2"} size={"md"}>
-          The first recycle to earn
+          The first recycle to earn (WIP Version)
         </Heading>
         <Countdown targetDate="December 8, 2023 23:59:59" />
         <Progress size="xs" colorScheme="brand" isIndeterminate />
