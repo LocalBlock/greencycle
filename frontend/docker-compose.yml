@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  greencycle:
+    container_name: greencycle-prod
+    build:
+      context: .
+      dockerfile: dockerfile
+      args:
+        NFT_STORAGE_KEY: ${NFT_STORAGE_KEY}
+        NEXT_PUBLIC_ALCHEMY_API_KEY: ${NEXT_PUBLIC_ALCHEMY_API_KEY}
+    pull_policy: build #To enable rebuilding of an image if already present on Docker standalone environments
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - stack.env #Stack file from portainer
+    networks:
+      - traefik_network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.greencycleProd.rule=Host(`greencycle.localblock.dev`)
+      - traefik.http.routers.greencycleProd.entrypoints=websecure
+
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  traefik_network:
+    external: true

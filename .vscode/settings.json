@@ -1,0 +1,6 @@
+/*
+ *This allows each project in frontend/ or backend/ to supply their own linting config and the extension should read from the config of the project you're in. Hopefully that helps!
+ */
+{
+  "eslint.workingDirectories": ["./frontend"]
+}
