@@ -8,7 +8,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [polygonMumbai, hardhat],
   [
     alchemyProvider({
-      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY as string,
+      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!,
     }),
     publicProvider(),
   ]

@@ -1,55 +1,32 @@
 "use client";
+import Hero from "@/components/Hero";
+import Presentation from "@/components/Presentation";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Box,
-  Flex,
-  Heading,
-  Image,
-  Progress,
 } from "@chakra-ui/react";
 
-import Countdown from "@/components/Countdown";
-import { Varela_Round } from "next/font/google";
-const varela = Varela_Round({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
+import { useNetwork } from "wagmi";
 
 export default function Home() {
 
-  return (
-    <Box
-      top={"50%"}
-      left={"50%"}
-      position={"fixed"}
-      transform={"translate(-50%,-50%)"}
-      textAlign={"center"}
-    >
-      <Image
-        src="logo.png"
-        alt="GreenCycle"
-        boxSize={"200px"}
-        margin={"auto"}
-      />
-      <Heading
-        as={"h1"}
-        fontFamily={varela.style.fontFamily}
-        bgGradient={"linear(to-r, #a0dea8, #103916)"}
-        bgClip={"text"}
-        fontSize={"5xl"}
-      >
-        GreenCycle
-      </Heading>
-      <Flex direction={"column"} gap={3}>
-        <Heading as={"h2"} size={"md"}>
-          The first recycle to earn (WIP Version)
-        </Heading>
-        <Countdown targetDate="December 8, 2023 23:59:59" />
-        <Progress size="xs" colorScheme="brand" isIndeterminate />
-        <Box>
+  const { chain } = useNetwork();
 
-        </Box>
-      </Flex>
+  return (
+    <Box as="main">
+      {chain?.unsupported && (
+        <Alert status="error" justifyContent={"center"}>
+          <AlertIcon />
+          <AlertTitle>Mauvais network</AlertTitle>Cette application est
+          opérationnel uniquement sur le réseau TestNet de polygon (Mumbai)
+          <br />
+          Veuillez changer le network sur votre wallet.
+        </Alert>
+      )}
+      <Hero />
+      <Presentation />
     </Box>
   );
 }
