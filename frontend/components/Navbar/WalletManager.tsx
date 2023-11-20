@@ -1,7 +1,6 @@
 import {
   Badge,
   Button,
-  Image,
   useToast,
   Text,
   Popover,
@@ -25,7 +24,7 @@ import {
   useNetwork,
   useBalance,
 } from "wagmi";
-
+import Image from 'next/image'
 import { FaCopy, FaCircleCheck, FaWallet } from "react-icons/fa6";
 
 function shortAddress(address: Address) {
@@ -133,7 +132,7 @@ function ConnectWallet() {
       loadingText={"Connecting..."}
       onClick={onConnect}
     >
-      <Image src="metamask.svg" alt="Metamask" boxSize={"20px"} />
+      <Image src="/metamask.svg" alt="Metamask" width={20} height={20} />
       &nbsp;Connect Wallet
     </Button>
   );

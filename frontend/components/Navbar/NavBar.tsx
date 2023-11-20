@@ -1,5 +1,6 @@
 "use client";
-import { Flex, Heading, Image } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
+import  Image from 'next/image'
 import React, { useEffect, useState } from "react";
 import { Varela_Round } from "next/font/google";
 import NavItemsDesktop from "./NavItemsDesktop";
@@ -42,7 +43,7 @@ export default function NavBar() {
       bgGradient={"linear(to-r, #c3ebc9, #3ea84c)"}
     >
       <Flex alignItems={"center"} gap={2} flex={1}>
-        <Image src="logo.png" alt="GreenCycle" boxSize={"50px"} />
+        <Image src="/logo.png" alt="GreenCycle" width={50} height={50} />
         <Heading
           as={"h1"}
           fontFamily={varela.style.fontFamily}
