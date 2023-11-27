@@ -1,11 +1,12 @@
-import { Box, Center, Container, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
 import {
-  FaHandHoldingHeart,
-  FaOilWell,
+  FaTruck ,
   FaTruckMonster,
   FaTowerBroadcast,
 } from "react-icons/fa6";
 import PresentationItem from "./PresentationItem";
+import { GiNuclearWaste } from "react-icons/gi";
+import { MdFactory } from "react-icons/md";
 
 export default function Presentation() {
   return (
@@ -17,42 +18,23 @@ export default function Presentation() {
         >
           <GridItem>
             <PresentationItem
-              title="Title presentation 1"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta unde
-          fuga et quae doloribus harum ad, esse asperiores laborum fugiat
-          provident voluptatem temporibus pariatur repellat autem debitis
-          voluptatum ipsum earum."
-              icon={FaHandHoldingHeart}
+              title="Producteur de déchets"
+              description="Vous pouvez suivre votre déchet jusqu'a son traitement. Ne perdez pas de temps en paperasse, GreenCycle le fait pour vous."
+              icon={GiNuclearWaste}
             />
           </GridItem>
           <GridItem>
             <PresentationItem
-              title="Title presentation 2 mais bien plus longue"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta unde
-          fuga et quae doloribus harum ad, esse asperiores laborum fugiat
-          provident voluptatem temporibus pariatur repellat autem debitis
-          voluptatum ipsum earum."
-              icon={FaOilWell}
+              title="Transporteur"
+              description="Vous pouvez consultez les déchets prêt à être transporter."
+              icon={FaTruck}
             />
           </GridItem>
           <GridItem>
             <PresentationItem
-              title="Title presentation 3"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta unde
-          fuga et quae doloribus harum ad, esse asperiores laborum fugiat
-          provident voluptatem temporibus pariatur repellat autem debitis
-          voluptatum ipsum earum."
-              icon={FaTruckMonster}
-            />
-          </GridItem>
-          <GridItem>
-            <PresentationItem
-              title="Title presentation 4"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta unde
-          fuga et quae doloribus harum ad, esse asperiores laborum fugiat
-          provident voluptatem temporibus pariatur repellat autem debitis
-          voluptatum ipsum earum."
-              icon={FaTowerBroadcast}
+              title="Centre de traitement"
+              description="Suivez les déchets des producteurs, qui vous sont destinés"
+              icon={MdFactory}
             />
           </GridItem>
         </Grid>

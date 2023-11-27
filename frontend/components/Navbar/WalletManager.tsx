@@ -24,19 +24,21 @@ import {
   useNetwork,
   useBalance,
 } from "wagmi";
-import Image from 'next/image'
+import Image from "next/image";
 import { FaCopy, FaCircleCheck, FaWallet } from "react-icons/fa6";
+import { useContext } from "react";
+import { RoleContext } from "@/contexts/role-provider";
 
 function shortAddress(address: Address) {
   return address.slice(0, 6) + "..." + address.slice(-4);
 }
-function shortBalance(balance:string|undefined){
-  if (!balance) return "0"
-  const temp=balance.split(".")
-  if (temp.length>1){
-    return temp[0]+"."+temp[1].slice(0,5) // X characters after decimal
-  }else{
-    return temp[0]
+function shortBalance(balance: string | undefined) {
+  if (!balance) return "0";
+  const temp = balance.split(".");
+  if (temp.length > 1) {
+    return temp[0] + "." + temp[1].slice(0, 5); // X characters after decimal
+  } else {
+    return temp[0];
   }
 }
 
@@ -46,9 +48,10 @@ function ConnectedWallet() {
   const balance = useBalance({ address, staleTime: 60_000 });
   const { disconnect } = useDisconnect();
   const { onCopy, hasCopied } = useClipboard(address!);
+  const role = useContext(RoleContext);
 
   return (
-    <Popover>
+    <Popover placement={"bottom-end"}>
       <PopoverTrigger>
         <Button leftIcon={<FaWallet />}>
           {shortAddress(address as Address)}
@@ -81,15 +84,17 @@ function ConnectedWallet() {
             )}
           </Flex>
         </PopoverHeader>
-        <PopoverBody>A définir, je sais pas quoi mettre ici pour l&apos;instant</PopoverBody>
+        <PopoverBody>
+          <Text>Profil : {role ?? "Inconnu"}</Text>
+          <Text>GRC token : Soon™ 😏</Text>
+        </PopoverBody>
         <PopoverFooter>
           <IconButton
             icon={hasCopied ? <FaCircleCheck /> : <FaCopy />}
             size={"xs"}
             aria-label="copy"
             onClick={onCopy}
-          />
-          {" "}
+          />{" "}
           <Button size={"xs"} onClick={() => disconnect()}>
             Disconnect
           </Button>
@@ -100,7 +105,7 @@ function ConnectedWallet() {
 }
 
 function ConnectWallet() {
-  const { connect, connectors, error, isLoading, pendingConnector } =
+  const { connect, connectors, isLoading } =
     useConnect();
   const metatmaskConnector = connectors[0];
   const { address, isConnected } = useAccount();
