@@ -17,6 +17,9 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
     bytes32 public constant RECIPIENT_ROLE = keccak256("RECIPIENT_ROLE");
     uint256 private nextTokenId;
 
+    // Errors
+    error InvalidRecipient();
+    error InvalidBSD();
     enum Status {
         Created,
         Shipped,
@@ -46,6 +49,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         string memory _uri,
         address _toRecipient
     ) public onlyRole(PRODUCER_ROLE) {
+        if (!hasRole(RECIPIENT_ROLE,_toRecipient)) revert InvalidRecipient();
         uint256 _tokenId = nextTokenId++;
         _safeMint(msg.sender, _tokenId);
         _setTokenURI(_tokenId, _uri);
@@ -61,7 +65,9 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         emit toRecipient(_tokenId, _toRecipient);
     }
 
-    function getTokenIdsOf(address _addr) public view returns (uint256[] memory) {
+    function getTokenIdsOf(
+        address _addr
+    ) public view returns (uint256[] memory) {
         uint256 _balanceOfOwner = balanceOf(_addr);
         uint256[] memory _myTokenIds = new uint256[](_balanceOfOwner);
         for (uint256 i = 0; i < _balanceOfOwner; ++i) {
@@ -70,7 +76,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         return _myTokenIds;
     }
 
-    function getBsdData(uint256 _tokenId) external view returns (Bsd memory){
+    function getBsdData(uint256 _tokenId) external view returns (Bsd memory) {
         return bsdData[_tokenId];
     }
 
@@ -78,12 +84,21 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         uint256 _tokenId,
         string memory _uri
     ) external onlyRole(TRANSPORTER_ROLE) {
-        // TODO : add Require
+        // Only created token
+        if (bsdData[_tokenId].status != Status.Created) revert InvalidBSD();
+            
+        
+        // C'est le cas où il peut y avoir le plus de problèmes dans le sens ou n'importe quelle transporteur peut accepter un BSD minté
+        // En theorie il devrait pas y avoir ce comportement
+        // S'il ya de l'abus faut slasher direct!
+        // ou alors on revient à un systeme de whitelist
 
         // Get approve for caller
         _approve(msg.sender, _tokenId, address(0));
 
         // Get ownership from Producer
+        // @dev _safeTranfer VS safeTranfertFrom
+        // Save 2855gas, because safeTranfertFrom doesn't check if token is allowed, both check if token be owned by 'from'
         _safeTransfer(ownerOf(_tokenId), msg.sender, _tokenId);
 
         // Update Metadata
@@ -99,6 +114,14 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         string memory _uri
     ) external onlyRole(RECIPIENT_ROLE) {
         // TODO : add Require
+        // Que ceux qui sont shipped
+        if (bsdData[_tokenId].status != Status.Shipped) revert InvalidBSD();
+
+        // Et que ceux qui lui sont destinés
+        if (bsdData[_tokenId].recipient != msg.sender) revert InvalidBSD();
+        
+        // Si il Refuse un BSD de maniere malveillante , par exemple qui n'est pas physiquement arrivé ou de manière sytématique
+        // Le producteur decide de le slasher aprés avoir constaté de noumbreux refus par exemple
 
         // Get approve for caller
         _approve(msg.sender, _tokenId, address(0));
@@ -118,6 +141,13 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         string memory _uri
     ) external onlyRole(RECIPIENT_ROLE) {
         // TODO : add Require
+        // Que ceux qui sont shipped
+        if (bsdData[_tokenId].status != Status.Shipped) revert InvalidBSD();
+
+        // Que si le token lui est destiné
+        if (bsdData[_tokenId].recipient != msg.sender) revert InvalidBSD();
+
+        // Au producteur de slasher ou pas si par exemple il s'est planter
 
         // Get approve for caller
         _approve(msg.sender, _tokenId, address(0));
@@ -137,9 +167,14 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         string memory _uri
     ) external onlyRole(RECIPIENT_ROLE) {
         // TODO : add Require
+        // Ben pas besoin de verifier le token est à lui, donc personne d'autre peut modifier le BSD
+        // Retour au cas classique de NFT en somme, et tant mieux pour une fois.
+        // Le producteur pourrait eventuellement le slasher, mais il faut une bonne raison!
+        // A ce moment, le BSD arrive a son point final et en théorie tout s'est bien passé, en tout c'est notre traca qui dit ca!!
+        // Reward pour tout le monde?
 
         // Return to producer
-        _safeTransfer(msg.sender,bsdData[_tokenId].producer, _tokenId);
+        _safeTransfer(msg.sender, bsdData[_tokenId].producer, _tokenId);
 
         // Update Metadata
         _setTokenURI(_tokenId, _uri);

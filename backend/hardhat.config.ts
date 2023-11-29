@@ -37,6 +37,8 @@ const config: HardhatUserConfig = {
   gasReporter: {
     coinmarketcap: COINMARKETCAP_API_KEY,
     currency: "EUR",
+    token:"MATIC",
+    gasPriceApi:"https://api.polygonscan.com/api?module=proxy&action=eth_gasPrice",
     enabled: false,
   },
   solidity: "0.8.20",
