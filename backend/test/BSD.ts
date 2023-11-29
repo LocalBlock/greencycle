@@ -814,43 +814,37 @@ describe("BSD Contract", () => {
   describe("4 - Tranfert public functions", () => {
     describe("From producer", () => {
       it("should revert if tranfert is made to unknow role address", async () => {
-        const { contract, producer } = await loadFixture(
+        const { contract, producer,unkownRole } = await loadFixture(
           deployContractWithOneMintedBsd
         );
-        // Random adress from REMIX
-        const unkownAddress = "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
         await expect(
           contract
             .connect(producer)
-            .transferFrom(producer.address, unkownAddress, 0)
+            .transferFrom(producer.address, unkownRole, 0)
         ).to.revertedWithCustomError(contract, "externalTransfertForbidden");
       });
     });
     describe("From transporter", () => {
       it("should revert if tranfert is made to unknow role address", async () => {
-        const { contract, transporter } = await loadFixture(
+        const { contract, transporter,unkownRole } = await loadFixture(
           deployContractWithOneShippedBsd
         );
-        // Random adress from REMIX
-        const unkownAddress = "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
         await expect(
           contract
             .connect(transporter)
-            .transferFrom(transporter.address, unkownAddress, 0)
+            .transferFrom(transporter.address, unkownRole, 0)
         ).to.revertedWithCustomError(contract, "externalTransfertForbidden");
       });
     });
     describe("From recipient", () => {
       it("should revert if tranfert is made to unknow role address", async () => {
-        const { contract, recipient } = await loadFixture(
+        const { contract, recipient,unkownRole } = await loadFixture(
           deployContractWithOneProcessedBsd
         );
-        // Random adress from REMIX
-        const unkownAddress = "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
         await expect(
           contract
             .connect(recipient)
-            .transferFrom(recipient.address, unkownAddress, 0)
+            .transferFrom(recipient.address, unkownRole, 0)
         ).to.revertedWithCustomError(contract, "externalTransfertForbidden");
       });
     });
