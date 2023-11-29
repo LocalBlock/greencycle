@@ -20,7 +20,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
     // Errors
     error InvalidRecipient();
     error InvalidBSD();
-    error externalTransfertForbibben();
+    error externalTransfertForbidden();
 
     enum Status {
         Created,
@@ -205,7 +205,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         address auth
     ) internal override(ERC721, ERC721Enumerable) returns (address) {
         // Unauthorise external tranfert
-        if (!_hasKnownRole(to)) revert externalTransfertForbibben();
+        if (!_hasKnownRole(to)) revert externalTransfertForbidden();
         return super._update(to, tokenId, auth);
     }
 

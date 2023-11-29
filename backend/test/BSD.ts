@@ -823,7 +823,7 @@ describe("BSD Contract", () => {
           contract
             .connect(producer)
             .transferFrom(producer.address, unkownAddress, 0)
-        ).to.revertedWithCustomError(contract, "externalTransfertForbibben");
+        ).to.revertedWithCustomError(contract, "externalTransfertForbidden");
       });
     });
     describe("From transporter", () => {
@@ -837,7 +837,7 @@ describe("BSD Contract", () => {
           contract
             .connect(transporter)
             .transferFrom(transporter.address, unkownAddress, 0)
-        ).to.revertedWithCustomError(contract, "externalTransfertForbibben");
+        ).to.revertedWithCustomError(contract, "externalTransfertForbidden");
       });
     });
     describe("From recipient", () => {
@@ -851,7 +851,7 @@ describe("BSD Contract", () => {
           contract
             .connect(recipient)
             .transferFrom(recipient.address, unkownAddress, 0)
-        ).to.revertedWithCustomError(contract, "externalTransfertForbibben");
+        ).to.revertedWithCustomError(contract, "externalTransfertForbidden");
       });
     });
   });
