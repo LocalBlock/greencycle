@@ -20,6 +20,8 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
     // Errors
     error InvalidRecipient();
     error InvalidBSD();
+    error externalTransfertForbibben();
+
     enum Status {
         Created,
         Shipped,
@@ -49,7 +51,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         string memory _uri,
         address _toRecipient
     ) public onlyRole(PRODUCER_ROLE) {
-        if (!hasRole(RECIPIENT_ROLE,_toRecipient)) revert InvalidRecipient();
+        if (!hasRole(RECIPIENT_ROLE, _toRecipient)) revert InvalidRecipient();
         uint256 _tokenId = nextTokenId++;
         _safeMint(msg.sender, _tokenId);
         _setTokenURI(_tokenId, _uri);
@@ -86,8 +88,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
     ) external onlyRole(TRANSPORTER_ROLE) {
         // Only created token
         if (bsdData[_tokenId].status != Status.Created) revert InvalidBSD();
-            
-        
+
         // C'est le cas où il peut y avoir le plus de problèmes dans le sens ou n'importe quelle transporteur peut accepter un BSD minté
         // En theorie il devrait pas y avoir ce comportement
         // S'il ya de l'abus faut slasher direct!
@@ -119,7 +120,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
 
         // Et que ceux qui lui sont destinés
         if (bsdData[_tokenId].recipient != msg.sender) revert InvalidBSD();
-        
+
         // Si il Refuse un BSD de maniere malveillante , par exemple qui n'est pas physiquement arrivé ou de manière sytématique
         // Le producteur decide de le slasher aprés avoir constaté de noumbreux refus par exemple
 
@@ -183,6 +184,19 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         bsdData[_tokenId].status = Status.Processed;
     }
 
+    /**
+     * check if address has a know role
+     * @param _addr Address
+     * @return bool
+     */
+    function _hasKnownRole(address _addr) internal view returns (bool) {
+        return
+            hasRole(PRODUCER_ROLE, _addr) ||
+            hasRole(TRANSPORTER_ROLE, _addr) ||
+            hasRole(RECIPIENT_ROLE, _addr) ||
+            hasRole(DEFAULT_ADMIN_ROLE, _addr);
+    }
+
     // The following functions are overrides required by Solidity.
 
     function _update(
@@ -190,6 +204,8 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         uint256 tokenId,
         address auth
     ) internal override(ERC721, ERC721Enumerable) returns (address) {
+        // Unauthorise external tranfert
+        if (!_hasKnownRole(to)) revert externalTransfertForbibben();
         return super._update(to, tokenId, auth);
     }
 

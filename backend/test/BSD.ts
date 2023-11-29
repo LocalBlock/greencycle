@@ -18,8 +18,15 @@ describe("BSD Contract", () => {
   // Fixture deployement
   async function deployContract() {
     //Get signers
-    const [deployer, producer, transporter, recipient, producer2, recipient2] =
-      await ethers.getSigners();
+    const [
+      deployer,
+      producer,
+      transporter,
+      recipient,
+      producer2,
+      recipient2,
+      unkownRole,
+    ] = await ethers.getSigners();
     const contract = await ethers.deployContract("BSD");
 
     // Get roles
@@ -42,6 +49,7 @@ describe("BSD Contract", () => {
       transporter,
       recipient,
       recipient2,
+      unkownRole,
     };
   }
 
@@ -50,11 +58,10 @@ describe("BSD Contract", () => {
    * @returns
    */
   async function deployContractWithOneMintedBsd() {
-    const { contract, producer, transporter, recipient } = await loadFixture(
-      deployContract
-    );
+    const { contract, producer, transporter, recipient, unkownRole } =
+      await loadFixture(deployContract);
     await contract.connect(producer).mint("ipfs://CID_MINTED", recipient);
-    return { contract, producer, transporter, recipient };
+    return { contract, producer, transporter, recipient, unkownRole };
   }
 
   /**
@@ -62,22 +69,34 @@ describe("BSD Contract", () => {
    * @returns
    */
   async function deployContractWithOneShippedBsd() {
-    const { contract, producer, transporter, recipient } = await loadFixture(
-      deployContractWithOneMintedBsd
-    );
+    const { contract, producer, transporter, recipient, unkownRole } =
+      await loadFixture(deployContractWithOneMintedBsd);
     await contract.connect(transporter).transportWaste(0, "ipfs://CID_SHIPPED");
-    return { contract, producer, transporter, recipient };
+    return { contract, producer, transporter, recipient, unkownRole };
   }
   /**
    * Fixture to deploy BSD contract with 1 BSD shipped to second recipient
    * @returns
    */
   async function deployContractWithOneShippedBsdToSecondRecipient() {
-    const { contract, producer, transporter, recipient, recipient2 } =
-      await loadFixture(deployContract);
+    const {
+      contract,
+      producer,
+      transporter,
+      recipient,
+      recipient2,
+      unkownRole,
+    } = await loadFixture(deployContract);
     await contract.connect(producer).mint("ipfs://CID", recipient2);
     await contract.connect(transporter).transportWaste(0, "ipfs://CID_SHIPPED");
-    return { contract, producer, transporter, recipient, recipient2 };
+    return {
+      contract,
+      producer,
+      transporter,
+      recipient,
+      recipient2,
+      unkownRole,
+    };
   }
 
   /**
@@ -85,11 +104,10 @@ describe("BSD Contract", () => {
    * @returns
    */
   async function deployContractWithOneAcceptedBsd() {
-    const { contract, producer, transporter, recipient } = await loadFixture(
-      deployContractWithOneShippedBsd
-    );
+    const { contract, producer, transporter, recipient, unkownRole } =
+      await loadFixture(deployContractWithOneShippedBsd);
     await contract.connect(recipient).recipientAccept(0, "ipfs://CID_ACCEPTED");
-    return { contract, producer, transporter, recipient };
+    return { contract, producer, transporter, recipient, unkownRole };
   }
 
   /**
@@ -97,24 +115,22 @@ describe("BSD Contract", () => {
    * @returns
    */
   async function deployContractWithOneRejectedBsd() {
-    const { contract, producer, transporter, recipient } = await loadFixture(
-      deployContractWithOneShippedBsd
-    );
+    const { contract, producer, transporter, recipient, unkownRole } =
+      await loadFixture(deployContractWithOneShippedBsd);
     await contract.connect(recipient).recipientReject(0, "ipfs://CID_REJECTED");
-    return { contract, producer, transporter, recipient };
+    return { contract, producer, transporter, recipient, unkownRole };
   }
   /**
    * Fixture to deploy BSD contract with 1 BSD processed
    * @returns
    */
   async function deployContractWithOneProcessedBsd() {
-    const { contract, producer, transporter, recipient } = await loadFixture(
-      deployContractWithOneAcceptedBsd
-    );
+    const { contract, producer, transporter, recipient, unkownRole } =
+      await loadFixture(deployContractWithOneAcceptedBsd);
     await contract
       .connect(recipient)
       .recipientProcess(0, "ipfs://CID_PROCESSED");
-    return { contract, producer, transporter, recipient };
+    return { contract, producer, transporter, recipient, unkownRole };
   }
 
   describe("1 - Deployment", () => {
@@ -126,7 +142,7 @@ describe("BSD Contract", () => {
   });
 
   describe("2 - Getter", () => {
-    it("should return all id of Owner", async () => {
+    it("should return all tokenId of owner", async () => {
       const { contract, producer, producer2, recipient } = await loadFixture(
         deployContract
       );
@@ -185,6 +201,20 @@ describe("BSD Contract", () => {
               "AccessControlUnauthorizedAccount"
             )
             .withArgs(recipient.address, neededRole);
+        });
+        it("should revert with unknown role address", async () => {
+          const { contract, recipient, unkownRole } = await loadFixture(
+            deployContract
+          );
+          const neededRole = await contract.PRODUCER_ROLE();
+          await expect(
+            contract.connect(unkownRole).mint("ipfs://CID_MINTED", recipient)
+          )
+            .to.revertedWithCustomError(
+              contract,
+              "AccessControlUnauthorizedAccount"
+            )
+            .withArgs(unkownRole.address, neededRole);
         });
       });
       describe("Extra Access Control", () => {
@@ -284,6 +314,20 @@ describe("BSD Contract", () => {
             )
             .withArgs(recipient.address, neededRole);
         });
+        it("should revert with unknown role", async () => {
+          const { contract, unkownRole } = await loadFixture(
+            deployContractWithOneMintedBsd
+          );
+          const neededRole = await contract.TRANSPORTER_ROLE();
+          await expect(
+            contract.connect(unkownRole).transportWaste(0, "ipfs://CID_SHIPPED")
+          )
+            .to.revertedWithCustomError(
+              contract,
+              "AccessControlUnauthorizedAccount"
+            )
+            .withArgs(unkownRole.address, neededRole);
+        });
       });
 
       describe("Extra Access Control", () => {
@@ -330,10 +374,16 @@ describe("BSD Contract", () => {
       });
       describe("Result", () => {
         it("should approve transporter to operate token", async () => {
-          const { contract,producer, transporter } = await loadFixture(
+          const { contract, producer, transporter } = await loadFixture(
             deployContractWithOneMintedBsd
           );
-          await expect( contract.connect(transporter).transportWaste(0,"ipfs://CID_SHIPPED")).to.emit(contract,"Approval").withArgs(producer.address,transporter.address,0)
+          await expect(
+            contract
+              .connect(transporter)
+              .transportWaste(0, "ipfs://CID_SHIPPED")
+          )
+            .to.emit(contract, "Approval")
+            .withArgs(producer.address, transporter.address, 0);
         });
         it("should tranfert token to transporter", async () => {
           const { contract, transporter } = await loadFixture(
@@ -403,6 +453,22 @@ describe("BSD Contract", () => {
             )
             .withArgs(transporter.address, neededRole);
         });
+        it("should revert with unknown role address", async () => {
+          const { contract, unkownRole } = await loadFixture(
+            deployContractWithOneShippedBsd
+          );
+          const neededRole = await contract.RECIPIENT_ROLE();
+          await expect(
+            contract
+              .connect(unkownRole)
+              .recipientReject(0, "ipfs://CID_REJECTED")
+          )
+            .to.revertedWithCustomError(
+              contract,
+              "AccessControlUnauthorizedAccount"
+            )
+            .withArgs(unkownRole.address, neededRole);
+        });
       });
       describe("Extra Access Control", () => {
         it("should revert if BSD have not shipped status (Created status case)", async () => {
@@ -458,10 +524,16 @@ describe("BSD Contract", () => {
       });
       describe("Result", () => {
         it("should approve recipient to operate token", async () => {
-          const { contract, transporter,recipient } = await loadFixture(
+          const { contract, transporter, recipient } = await loadFixture(
             deployContractWithOneShippedBsd
           );
-          await expect( contract.connect(recipient).recipientReject(0,"ipfs://CID_REJECTED")).to.emit(contract,"Approval").withArgs(transporter.address,recipient.address,0)
+          await expect(
+            contract
+              .connect(recipient)
+              .recipientReject(0, "ipfs://CID_REJECTED")
+          )
+            .to.emit(contract, "Approval")
+            .withArgs(transporter.address, recipient.address, 0);
         });
         it("should tranfert token to producer", async () => {
           const { contract, producer } = await loadFixture(
@@ -530,6 +602,22 @@ describe("BSD Contract", () => {
             )
             .withArgs(transporter.address, neededRole);
         });
+        it("should revert with unknown role address", async () => {
+          const { contract, unkownRole } = await loadFixture(
+            deployContractWithOneShippedBsd
+          );
+          const neededRole = await contract.RECIPIENT_ROLE();
+          await expect(
+            contract
+              .connect(unkownRole)
+              .recipientAccept(0, "ipfs://CID_ACCEPTED")
+          )
+            .to.revertedWithCustomError(
+              contract,
+              "AccessControlUnauthorizedAccount"
+            )
+            .withArgs(unkownRole.address, neededRole);
+        });
       });
       describe("Extra Access Control", () => {
         it("should revert if BSD have not shipped status (Created status case)", async () => {
@@ -585,10 +673,16 @@ describe("BSD Contract", () => {
       });
       describe("Result", () => {
         it("should approve recipient to operate token", async () => {
-          const { contract, transporter,recipient } = await loadFixture(
+          const { contract, transporter, recipient } = await loadFixture(
             deployContractWithOneShippedBsd
           );
-          await expect( contract.connect(recipient).recipientAccept(0,"ipfs://CID_ACCEPTED")).to.emit(contract,"Approval").withArgs(transporter.address,recipient.address,0)
+          await expect(
+            contract
+              .connect(recipient)
+              .recipientAccept(0, "ipfs://CID_ACCEPTED")
+          )
+            .to.emit(contract, "Approval")
+            .withArgs(transporter.address, recipient.address, 0);
         });
         it("should tranfert token to recipient", async () => {
           const { contract, recipient } = await loadFixture(
@@ -659,6 +753,22 @@ describe("BSD Contract", () => {
             )
             .withArgs(transporter.address, neededRole);
         });
+        it("should revert with unknown role address", async () => {
+          const { contract, unkownRole } = await loadFixture(
+            deployContractWithOneAcceptedBsd
+          );
+          const neededRole = await contract.RECIPIENT_ROLE();
+          await expect(
+            contract
+              .connect(unkownRole)
+              .recipientProcess(0, "ipfs://CID_PROCESSED")
+          )
+            .to.revertedWithCustomError(
+              contract,
+              "AccessControlUnauthorizedAccount"
+            )
+            .withArgs(unkownRole.address, neededRole);
+        });
       });
       describe("Extra Access Control", () => {
         it("should revert if recipient is not BSD owner", async () => {
@@ -701,7 +811,51 @@ describe("BSD Contract", () => {
       });
     });
   });
-  describe("4 - Override", () => {
+  describe("4 - Tranfert public functions", () => {
+    describe("From producer", () => {
+      it("should revert if tranfert is made to unknow role address", async () => {
+        const { contract, producer } = await loadFixture(
+          deployContractWithOneMintedBsd
+        );
+        // Random adress from REMIX
+        const unkownAddress = "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
+        await expect(
+          contract
+            .connect(producer)
+            .transferFrom(producer.address, unkownAddress, 0)
+        ).to.revertedWithCustomError(contract, "externalTransfertForbibben");
+      });
+    });
+    describe("From transporter", () => {
+      it("should revert if tranfert is made to unknow role address", async () => {
+        const { contract, transporter } = await loadFixture(
+          deployContractWithOneShippedBsd
+        );
+        // Random adress from REMIX
+        const unkownAddress = "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
+        await expect(
+          contract
+            .connect(transporter)
+            .transferFrom(transporter.address, unkownAddress, 0)
+        ).to.revertedWithCustomError(contract, "externalTransfertForbibben");
+      });
+    });
+    describe("From recipient", () => {
+      it("should revert if tranfert is made to unknow role address", async () => {
+        const { contract, recipient } = await loadFixture(
+          deployContractWithOneProcessedBsd
+        );
+        // Random adress from REMIX
+        const unkownAddress = "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
+        await expect(
+          contract
+            .connect(recipient)
+            .transferFrom(recipient.address, unkownAddress, 0)
+        ).to.revertedWithCustomError(contract, "externalTransfertForbibben");
+      });
+    });
+  });
+  describe("5 - Override Functions", () => {
     it("supportsInterface", async () => {
       const { contract } = await loadFixture(deployContract);
       const ERC165ID = "0x01ffc9a7" as BytesLike;
