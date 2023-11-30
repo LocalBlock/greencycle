@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -11,7 +10,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * @author localblock@proton.me
  * @notice This contract was design during Alyra school course, Finney promotion, DO NOT USE in Production
  */
-contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
+contract BSD is ERC721, ERC721URIStorage, AccessControl {
     bytes32 public constant PRODUCER_ROLE = keccak256("PRODUCER_ROLE");
     bytes32 public constant TRANSPORTER_ROLE = keccak256("TRANSPORTER_ROLE");
     bytes32 public constant RECIPIENT_ROLE = keccak256("RECIPIENT_ROLE");
@@ -65,17 +64,6 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         );
 
         emit toRecipient(_tokenId, _toRecipient);
-    }
-
-    function getTokenIdsOf(
-        address _addr
-    ) public view returns (uint256[] memory) {
-        uint256 _balanceOfOwner = balanceOf(_addr);
-        uint256[] memory _myTokenIds = new uint256[](_balanceOfOwner);
-        for (uint256 i = 0; i < _balanceOfOwner; ++i) {
-            _myTokenIds[i] = tokenOfOwnerByIndex(_addr, i);
-        }
-        return _myTokenIds;
     }
 
     function getBsdData(uint256 _tokenId) external view returns (Bsd memory) {
@@ -203,18 +191,12 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
         address to,
         uint256 tokenId,
         address auth
-    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+    ) internal override(ERC721) returns (address) {
         // Unauthorise external tranfert
         if (!_hasKnownRole(to)) revert externalTransfertForbidden();
         return super._update(to, tokenId, auth);
     }
 
-    function _increaseBalance(
-        address account,
-        uint128 value
-    ) internal override(ERC721, ERC721Enumerable) {
-        super._increaseBalance(account, value);
-    }
 
     function tokenURI(
         uint256 tokenId
@@ -227,7 +209,7 @@ contract BSD is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl {
     )
         public
         view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl)
+        override(ERC721, ERC721URIStorage, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

@@ -1,10 +1,10 @@
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { getRole } from "./user";
 import { PublicClient } from "wagmi";
 import { bsdContractConfig } from "@/contracts/BSD";
 import { readContract } from "@wagmi/core";
 import { getIpfsData } from "./metadata";
-import { Bsd, BsdDataContract } from "@/types/types";
+import { Bsd } from "@/types/types";
 
 export async function getMyBsd(address: Address, publicClient: PublicClient) {
   const role = getRole(address);
@@ -13,7 +13,7 @@ export async function getMyBsd(address: Address, publicClient: PublicClient) {
       // Get all TokenId Minted to producer address
       const allTokenId = await getTokenIdFromTransferEvents(
         publicClient,
-        "0x0000000000000000000000000000000000000000",
+        zeroAddress,
         address
       );
       if (allTokenId.length === 0) return [];
@@ -31,21 +31,22 @@ export async function getMyBsd(address: Address, publicClient: PublicClient) {
       // Get all tokenId Minted (Get events)
       const allMintedTokenid = await getTokenIdFromTransferEvents(
         publicClient,
-        "0x0000000000000000000000000000000000000000"
+        zeroAddress
       );
 
-      // Get owned tokenid (Read contract)
-      const myTokenIds = await getTokenIdsOf(address);
+      // // Get owned tokenid (Read contract)
+      // const myTokenIds = await getTokenIdsOf(address);
 
       // Get all tokenId tranfered from transporter (get event)
       const allTranferedTokenid = await getTokenIdFromTransferEvents(
         publicClient,
+        undefined,
         address
       );
 
       // Remove all doublons
       const allTokenId = Array.from(
-        new Set([...allMintedTokenid, ...myTokenIds, ...allTranferedTokenid])
+        new Set([...allMintedTokenid, ...allTranferedTokenid])
       );
 
       // get metadata and build BSD
@@ -175,15 +176,15 @@ async function getBsdData(id: number) {
  * @param address Owner
  * @returns Array of tokenId
  */
-async function getTokenIdsOf(address: Address) {
-  const myTokenIds = await readContract({
-    address: bsdContractConfig.contractAddress,
-    abi: bsdContractConfig.abi,
-    functionName: "getTokenIdsOf",
-    args: [address],
-  });
-  return myTokenIds.map((tokenId) => Number(tokenId));
-}
+// async function getTokenIdsOf(address: Address) {
+//   const myTokenIds = await readContract({
+//     address: bsdContractConfig.contractAddress,
+//     abi: bsdContractConfig.abi,
+//     functionName: "getTokenIdsOf",
+//     args: [address],
+//   });
+//   return myTokenIds.map((tokenId) => Number(tokenId));
+// }
 
 /**
  * Call "owerOf" to retrieve the owner

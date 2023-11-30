@@ -1,8 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { anyUint } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { BytesLike, ZeroAddress, keccak256 } from "ethers";
+import { BytesLike, ZeroAddress } from "ethers";
 
 // Enum from SmartContract
 enum BsdStatus {
@@ -141,28 +140,7 @@ describe("BSD Contract", () => {
     });
   });
 
-  describe("2 - Getter", () => {
-    it("should return all tokenId of owner", async () => {
-      const { contract, producer, producer2, recipient } = await loadFixture(
-        deployContract
-      );
-      // Mint several BSD
-      await contract.connect(producer).mint("ipfs://CID", recipient);
-      await contract.connect(producer2).mint("ipfs://CID", recipient);
-      await contract.connect(producer).mint("ipfs://CID", recipient);
-      await contract.connect(producer2).mint("ipfs://CID", recipient);
-      await contract.connect(producer).mint("ipfs://CID", recipient);
-      await contract.connect(producer2).mint("ipfs://CID", recipient);
-
-      const producerToken = await contract.getTokenIdsOf(producer);
-      const producer2Token = await contract.getTokenIdsOf(producer2);
-
-      expect(producerToken).to.be.eql([0n, 2n, 4n]);
-      expect(producer2Token).to.be.eql([1n, 3n, 5n]);
-    });
-  });
-
-  describe("3 - Functionnality", () => {
+  describe("2 - Functionnality", () => {
     describe("Mint", () => {
       describe("Access Control", () => {
         it("should NOT revert with producer role", async () => {
@@ -238,9 +216,12 @@ describe("BSD Contract", () => {
           const { contract, producer, recipient } = await loadFixture(
             deployContractWithOneMintedBsd
           );
-          await contract.connect(producer).mint("ipfs://CID_MINTED", recipient);
-          //Check token ID from second minted token
-          expect(await contract.tokenByIndex(1)).to.equal(1);
+          //Check token ID from second minted token with event
+          await expect(
+            contract.connect(producer).mint("ipfs://CID_MINTED", recipient)
+          )
+            .to.emit(contract, "Transfer")
+            .withArgs(ZeroAddress, producer.address, 1);
         });
         it("should set tokenURI", async () => {
           const { contract } = await loadFixture(
@@ -811,10 +792,10 @@ describe("BSD Contract", () => {
       });
     });
   });
-  describe("4 - Tranfert public functions", () => {
+  describe("3 - Tranfert public functions", () => {
     describe("From producer", () => {
       it("should revert if tranfert is made to unknow role address", async () => {
-        const { contract, producer,unkownRole } = await loadFixture(
+        const { contract, producer, unkownRole } = await loadFixture(
           deployContractWithOneMintedBsd
         );
         await expect(
@@ -826,7 +807,7 @@ describe("BSD Contract", () => {
     });
     describe("From transporter", () => {
       it("should revert if tranfert is made to unknow role address", async () => {
-        const { contract, transporter,unkownRole } = await loadFixture(
+        const { contract, transporter, unkownRole } = await loadFixture(
           deployContractWithOneShippedBsd
         );
         await expect(
@@ -838,7 +819,7 @@ describe("BSD Contract", () => {
     });
     describe("From recipient", () => {
       it("should revert if tranfert is made to unknow role address", async () => {
-        const { contract, recipient,unkownRole } = await loadFixture(
+        const { contract, recipient, unkownRole } = await loadFixture(
           deployContractWithOneProcessedBsd
         );
         await expect(
@@ -849,7 +830,7 @@ describe("BSD Contract", () => {
       });
     });
   });
-  describe("5 - Override Functions", () => {
+  describe("4 - Override Functions", () => {
     it("supportsInterface", async () => {
       const { contract } = await loadFixture(deployContract);
       const ERC165ID = "0x01ffc9a7" as BytesLike;
