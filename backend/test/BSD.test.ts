@@ -411,7 +411,7 @@ describe("BSD Contract", () => {
           .approve(vaultContract.target, parseEther("9")); // approuve Vault
         await expect(bsdContract.connect(producer).deposit(parseEther("9")))
           .to.revertedWithCustomError(vaultContract, "insufficientLockAmount")
-          .withArgs(await vaultContract.MIN_AMOUNT_LOCK());
+          .withArgs(await vaultContract.MIN_LOCK_AMOUNT());
       });
     });
     describe("Withdraw", () => {
@@ -503,7 +503,7 @@ describe("BSD Contract", () => {
           bsdContract.connect(producer).mint("ipfs://CID_MINTED", recipient)
         )
           .to.revertedWithCustomError(bsdContract, "InsufficientLockAmount")
-          .withArgs(await vaultContract.MIN_AMOUNT_LOCK());
+          .withArgs(await vaultContract.MIN_LOCK_AMOUNT());
       });
       it("should revert if recpient address has NOT Recipient role ", async () => {
         const { bsdContract, producer, deployer } = await loadFixture(
@@ -639,7 +639,7 @@ describe("BSD Contract", () => {
             .transportWaste(0, "ipfs://CID_SHIPPED", (await time.latest()) + 60)
         )
           .to.revertedWithCustomError(bsdContract, "InsufficientLockAmount")
-          .withArgs(await vaultContract.MIN_AMOUNT_LOCK());
+          .withArgs(await vaultContract.MIN_LOCK_AMOUNT());
       });
       it("should revert if BSD have not created status (Shipped status case)", async () => {
         const { bsdContract, transporter } = await loadFixture(
@@ -1173,7 +1173,7 @@ describe("BSD Contract", () => {
             .recipientProcess(0, "ipfs://CID_SHIPPED")
         )
           .to.revertedWithCustomError(bsdContract, "InsufficientLockAmount")
-          .withArgs(await vaultContract.MIN_AMOUNT_LOCK());
+          .withArgs(await vaultContract.MIN_LOCK_AMOUNT());
       });
       it("should revert if recipient is not BSD owner", async () => {
         const { bsdContract, recipient, recipient2 } = await loadFixture(

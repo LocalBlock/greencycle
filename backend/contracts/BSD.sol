@@ -115,7 +115,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         address _toRecipient
     ) public onlyRole(PRODUCER_ROLE) {
         if (!isSufficientLockAmount())
-            revert InsufficientLockAmount(GRCVault.MIN_AMOUNT_LOCK());
+            revert InsufficientLockAmount(GRCVault.MIN_LOCK_AMOUNT());
         if (!hasRole(RECIPIENT_ROLE, _toRecipient)) revert InvalidRecipient();
         uint256 _tokenId = nextTokenId++;
         _safeMint(msg.sender, _tokenId);
@@ -142,7 +142,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         uint256 _deliveryDate
     ) external onlyRole(TRANSPORTER_ROLE) {
         if (!isSufficientLockAmount())
-            revert InsufficientLockAmount(GRCVault.MIN_AMOUNT_LOCK());
+            revert InsufficientLockAmount(GRCVault.MIN_LOCK_AMOUNT());
         if (bsdData[_tokenId].status != Status.Created) revert InvalidBSD();
 
         // Get approve for caller
@@ -238,7 +238,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         string memory _uri
     ) external onlyRole(RECIPIENT_ROLE) {
         if (!isSufficientLockAmount())
-            revert InsufficientLockAmount(GRCVault.MIN_AMOUNT_LOCK());
+            revert InsufficientLockAmount(GRCVault.MIN_LOCK_AMOUNT());
 
         // Return to producer
         _safeTransfer(
@@ -312,7 +312,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
     }
 
     function isSufficientLockAmount() internal view returns (bool) {
-        if (GRCVault.balanceOf(msg.sender) >= GRCVault.MIN_AMOUNT_LOCK())
+        if (GRCVault.balanceOf(msg.sender) >= GRCVault.MIN_LOCK_AMOUNT())
             return true;
         return false;
     }

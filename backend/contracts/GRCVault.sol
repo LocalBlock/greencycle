@@ -7,7 +7,7 @@ error insufficientLockAmount(uint needed);
 
 contract GRCVault {
     // Constants
-    uint256 public constant MIN_AMOUNT_LOCK = 10 ether;
+    uint256 public constant MIN_LOCK_AMOUNT = 10 ether;
 
     //Errors
     error unauthorizedCaller();
@@ -55,8 +55,8 @@ contract GRCVault {
     }
 
     function lock(address _user, uint _amount) external onlyBsdContract {
-        if (_amount < MIN_AMOUNT_LOCK)
-            revert insufficientLockAmount(MIN_AMOUNT_LOCK);
+        if (_amount < MIN_LOCK_AMOUNT)
+            revert insufficientLockAmount(MIN_LOCK_AMOUNT);
 
         GRCToken.transferFrom(_user, address(this), _amount);
         lockVault[_user] = lockVault[_user] + _amount;

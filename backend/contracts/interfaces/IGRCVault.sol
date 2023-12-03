@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 interface IGRCVault {
-    function MIN_AMOUNT_LOCK() external view returns (uint256);
+    function MIN_LOCK_AMOUNT() external view returns (uint256);
 
     event tokenLock(uint256 indexed amount, address indexed owner);
     event tokenUnlock(uint256 indexed amount, address indexed owner);
