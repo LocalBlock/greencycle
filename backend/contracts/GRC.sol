@@ -10,8 +10,6 @@ import "./interfaces/IBSD.sol";
 contract GRC is ERC20,ERC20Burnable , ERC165 {
     //Errors
     error unauthorizedCaller();
-    error maximumTransfertAmountReach(uint256 maximumPermitAmount);
-    error InsufficientBalance();
 
     // Interfaces
     IAddressesProvider AddressesProvider;
