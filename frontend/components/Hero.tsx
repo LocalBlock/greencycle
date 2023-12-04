@@ -18,10 +18,11 @@ export default function Hero() {
           justifyContent={"space-between"}
           alignItems={"center"}
           height={"70vh"}
-          gap={2}
+          gap={{ base: 5, md: 20}}
           direction={{ base: "column", md: "row" }}
+          //my={{ base:5, md: "initial" }}
         >
-          <Flex width={"100%"} direction={"column"} gap={3} paddingTop={5}>
+          <Flex width={"100%"} direction={"column"} gap={5} paddingTop={5}>
             <Heading
               as={"h1"}
               size={{ base: "sm", md: "xl" }}
@@ -41,17 +42,18 @@ export default function Hero() {
               récompenser de leur action pour l&apos;environnement, un des
               enjeux majeurs de notre siècle.
             </Text>
-            <Button as={NextLink} href="/" w={"fit-content"}>
-              En savoir plus
+            <Button as={NextLink} href="/" w={"fit-content"} isDisabled>
+              Inscrivez vous (Coming soon)
             </Button>
           </Flex>
           <Box
             backgroundImage={"hero.png"}
             backgroundSize={"contain"}
-            backgroundPosition={"right"}
+            backgroundPosition={{ base: "center", md: "right" }}
             backgroundRepeat={"no-repeat"}
             width={"100%"}
             height={"100%"}
+            mb={{ base: 5, md: "initial" }}
           ></Box>
         </Flex>
       </Container>

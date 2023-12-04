@@ -10,17 +10,11 @@ import {
   Text,
   useSteps,
   Spinner,
+  Heading,
 } from "@chakra-ui/react";
 import { FaExclamation } from "react-icons/fa6";
 import { IconContext } from "react-icons";
-
-// Title and description are not use
-const steps = [
-  { title: "First", description: "Submit Transaction" },
-  { title: "Second", description: "Upload to ipfs" },
-  { title: "Third", description: "Transaction pending" },
-  { title: "fourth", description: "Transaction complete" },
-];
+import { TxSteps } from "@/types/types";
 
 const stepStatusOkIcon = <StepIcon />;
 const stepStatusNokIcon = (
@@ -31,91 +25,64 @@ const stepStatusNokIcon = (
 
 export default function TxStepper({
   status,
+  steps,
 }: {
-  status: "error" | "success" | "idle" | "loading" | "ipfs";
+  status: TxSteps[number]["status"] | "error";
+  steps: TxSteps;
 }) {
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
+  const computeStep = steps.findIndex((step) => step.status === status);
 
   let activeStepDescription: JSX.Element;
 
-  switch (status) {
-    case "idle":
-      {
-        activeStep != 0 && setActiveStep(0);
-        activeStepDescription = <Text>Confirmer l&apos;action</Text>;
-      }
-      break;
-    case "ipfs":
-      {
-        activeStep != 1 && setActiveStep(1);
-        activeStepDescription = (
-          <Center>
-            <Text>IPFS to Upload&nbsp;</Text>
-            <Spinner size={"sm"} />
-          </Center>
-        );
-      }
-      break;
-    case "loading":
-      {
-        activeStep != 2 && setActiveStep(2);
-        activeStepDescription = (
-          <Center>
-            <Text>Transaction in progress&nbsp;</Text>
-            <Spinner size={"sm"} />
-          </Center>
-        );
-      }
-      break;
-    case "error":
-      {
-        activeStep != 3 && setActiveStep(3);
-        activeStepDescription = (
-          <Box>
-            <Text align={"center"} color={"red"}>
-              Transaction failed
-            </Text>
-          </Box>
-        );
-      }
-      break;
-    case "success":
-      {
-        activeStep != 4 && setActiveStep(4);
-        activeStepDescription = (
-          <Box>
-            <Text align={"end"} color={"green"}>
-              Transaction completed
-            </Text>
-          </Box>
-        );
-      }
-      break;
+  if (computeStep != -1) {
+    activeStep != computeStep && setActiveStep(computeStep);
+    activeStepDescription = (
+      <Center>
+        <Text color={status === "success" ? "green" : "initial"}>
+          {steps[activeStep].description}&nbsp;
+        </Text>
+        {(status === "approve" || status === "loading") && (
+          <Spinner size={"sm"} />
+        )}
+      </Center>
+    );
+  } else {
+    activeStepDescription = <Center><Text color={"red"}>Transaction failed</Text></Center>;
+    activeStep != steps.length && setActiveStep(steps.length);
   }
 
-  //console.log(activeStep, status);
   return (
     <Box margin={2}>
+      <Heading size={"md"} mb={2}>
+        Statut de la transaction
+      </Heading>
       <Stepper size="sm" index={activeStep} gap="0" marginBottom={2}>
-        {steps.map((step, index) => (
-          // @ts-ignore
-          <Step key={index} gap="0">
-            <StepIndicator>
-              <StepStatus
-                complete={
-                  index === 2 && activeStep === 3 && status === "error"
-                    ? stepStatusNokIcon
-                    : stepStatusOkIcon
-                }
-              />
-            </StepIndicator>
-            {/* @ts-ignore */}
-            <StepSeparator _horizontal={{ ml: "0" }} />
-          </Step>
-        ))}
+        {steps.map((step, index) => {
+          if (index + 1 == steps.length) return null; // don't display last step
+
+          return (
+            // @ts-ignore
+            <Step key={index} gap="0">
+              <StepIndicator>
+                <StepStatus
+                  complete={
+                    activeStep === steps.length &&
+                    index === steps.length - 2 &&
+                    status === "error"
+                      ? stepStatusNokIcon
+                      : stepStatusOkIcon
+                  }
+                />
+              </StepIndicator>
+              {/* @ts-ignore */}
+              <StepSeparator _horizontal={{ ml: "0" }} />
+            </Step>
+          );
+        })}
       </Stepper>
       {activeStepDescription}
     </Box>

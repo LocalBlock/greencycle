@@ -1,7 +1,7 @@
 "use client";
 
 import CreateBSD from "@/components/Bsd/CreateBSD";
-import { RoleContext } from "@/contexts/role-provider";
+import { RoleContext } from "@/contexts/RoleProvider";
 
 import { Box, Text } from "@chakra-ui/react";
 import { useContext } from "react";

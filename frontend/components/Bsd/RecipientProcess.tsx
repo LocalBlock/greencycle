@@ -29,13 +29,20 @@ import {
 } from "@wagmi/core";
 import TxStepper from "@/components/Bsd/TxStepper";
 import { useState } from "react";
-import { Bsd } from "@/types/types";
+import { Bsd, TxSteps } from "@/types/types";
 import { updateMetadataRecipientProcess, uploadToIpfs } from "@/utils/metadata";
 import operationCodes from "@/data/operationCodes.json";
 
 type Props = {
   bsd: Bsd;
 };
+
+const steps: TxSteps = [
+  { status: "idle", description: "Confirmer l'action" },
+  { status: "ipfs", description: "Upload sur IPFS" },
+  { status: "loading", description: "Transaction en attente" },
+  { status: "success", description: "Transaction completée" },
+];
 
 export default function Transport({ bsd }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -146,7 +153,7 @@ export default function Transport({ bsd }: Props) {
                   <AlertDescription>{error.description}</AlertDescription>
                 </Alert>
               )}
-              <TxStepper status={status} />
+              <TxStepper status={status} steps={steps}/>
               {status != "success" && (
                 <>
                   <FormControl isRequired>

@@ -85,7 +85,34 @@ export type Bsd = {
 export type BsdDataContract = {
   status: Status;
   owner: Address;
-  producerAddress: Address;
-  transporterAddress: Address;
-  recipientAddress: Address;
+  producer: {
+    walletAddress: Address;
+  };
+  transporter: {
+    walletAddress: Address;
+    pickupDate: bigint;
+    deliveryDate: bigint;
+  };
+  recipient: {
+    walletAddress: Address;
+    wasteDecisionDate: bigint;
+    finalDate: bigint;
+  };
 };
+
+export type ContractConstants = {
+  bsd: {
+    maxProcessTime: number;
+    onboardingMintAmount: number;
+    rewardMintAmount: number;
+    slashAmount: number;
+  };
+  vault: {
+    minLockAmount: number;
+  };
+};
+
+export type TxSteps = {
+  status: "success" | "idle" | "loading" | "ipfs" | "approve";
+  description: string;
+}[];

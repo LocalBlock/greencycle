@@ -6,7 +6,7 @@ export default function NavItemsMobile({onClose}:{onClose:()=>void}) {
     <Flex gap={5} direction={"column"}>
       <Link as={NextLink} href="/" scroll={false} onClick={onClose}>Home</Link>
       <Link as={NextLink} href="/bsd" scroll={false} onClick={onClose}>BSD</Link>
-      {/* <Link as={NextLink} href="/page2" scroll={false} onClick={onClose}>Page2</Link> */}
+      <Link as={NextLink} href="/infos" scroll={false} onClick={onClose}>Infos</Link>
     </Flex>
   );
 }

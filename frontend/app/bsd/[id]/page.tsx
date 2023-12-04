@@ -27,20 +27,31 @@ import { MdFactory } from "react-icons/md";
 import StatusBadge from "@/components/Bsd/StatusBadge";
 import { IconContext } from "react-icons";
 import { FiPackage } from "react-icons/fi";
-import { RoleContext } from "@/contexts/role-provider";
+import { RoleContext } from "@/contexts/RoleProvider";
 import Transport from "@/components/Bsd/Transport";
 import RecipientRefuse from "@/components/Bsd/RecipientRefuse";
 import RecipientAccept from "@/components/Bsd/RecipientAccept";
 import RecipientProcess from "@/components/Bsd/RecipientProcess";
 import operationCodes from "@/data/operationCodes.json";
+import { zeroAddress } from "viem";
 
 const fakeBsd: Bsd = {
   id: 0,
   status: Status.Created,
-  owner: "0x0000000000000000000000000000000000000000",
-  producerAddress: "0x0000000000000000000000000000000000000000",
-  transporterAddress: "0x0000000000000000000000000000000000000000",
-  recipientAddress: "0x0000000000000000000000000000000000000000",
+  owner: zeroAddress,
+  producer: {
+    walletAddress:zeroAddress
+  },
+  transporter:{
+    walletAddress:zeroAddress,
+    pickupDate:BigInt(0),
+    deliveryDate:BigInt(0)
+  }, 
+  recipient: {
+    walletAddress:zeroAddress,
+    wasteDecisionDate:BigInt(0),
+    finalDate:BigInt(0)
+  },
   metadata: {
     producer: {
       company: {
@@ -150,29 +161,37 @@ export default function Bsd({ params }: { params: { id: number } }) {
                     ).toLocaleString()}
                   </Text>
                 )}
-                {bsd.metadata.transporter && (
+                {bsd.transporter.pickupDate!=BigInt(0) && (
                   <Text>
                     Tranporté le :{" "}
                     {new Date(
-                      bsd.metadata.transporter.pickupDate
+                      Number(bsd.transporter.pickupDate)*1000
                     ).toLocaleString()}
                   </Text>
                 )}
-                {bsd.metadata.recipient.wasteDecisionDate && (
+                {bsd.transporter.deliveryDate!=BigInt(0) && (
+                  <Text>
+                    Livraison prévue le :{" "}
+                    {new Date(
+                      Number(bsd.transporter.deliveryDate)*1000
+                    ).toLocaleString()}
+                  </Text>
+                )}
+                {bsd.recipient.wasteDecisionDate!=BigInt(0) && (
                   <Text>
                     {bsd.metadata.recipient.isWasteAccepted
                       ? "Accepté le : "
                       : "Refusé le : "}
                     {new Date(
-                      bsd.metadata.recipient.wasteDecisionDate
+                      Number(bsd.recipient.wasteDecisionDate)*1000
                     ).toLocaleString()}
                   </Text>
                 )}
-                {bsd.metadata.recipient.finalDate && (
+                {bsd.recipient.finalDate!=BigInt(0) && (
                   <Text>
                     Traité le :{" "}
                     {new Date(
-                      bsd.metadata.recipient.finalDate
+                      Number(bsd.recipient.finalDate)*1000
                     ).toLocaleString()}
                   </Text>
                 )}
@@ -270,7 +289,7 @@ export default function Bsd({ params }: { params: { id: number } }) {
             </Tabs>
           </Box>
         </CardBody>
-        {role === "transporter" && bsd.status != Status.Shipped && (
+        {role === "transporter" && bsd.status === Status.Created && (
           <CardFooter>
             <Transport bsd={bsd} />
           </CardFooter>

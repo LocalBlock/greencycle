@@ -34,9 +34,6 @@ export async function getMyBsd(address: Address, publicClient: PublicClient) {
         zeroAddress
       );
 
-      // // Get owned tokenid (Read contract)
-      // const myTokenIds = await getTokenIdsOf(address);
-
       // Get all tokenId tranfered from transporter (get event)
       const allTranferedTokenid = await getTokenIdFromTransferEvents(
         publicClient,
@@ -164,27 +161,12 @@ async function getBsdData(id: number) {
   const bsdData = {
     status: bsdStructData.status,
     owner,
-    producerAddress: bsdStructData.producer,
-    transporterAddress: bsdStructData.transporter,
-    recipientAddress: bsdStructData.recipient,
+    producer: bsdStructData.producer,
+    transporter: bsdStructData.transporter,
+    recipient: bsdStructData.recipient,
   };
   return bsdData;
 }
-
-/**
- * Call "myTokenIds" to retrieve all tokenId from owner
- * @param address Owner
- * @returns Array of tokenId
- */
-// async function getTokenIdsOf(address: Address) {
-//   const myTokenIds = await readContract({
-//     address: bsdContractConfig.contractAddress,
-//     abi: bsdContractConfig.abi,
-//     functionName: "getTokenIdsOf",
-//     args: [address],
-//   });
-//   return myTokenIds.map((tokenId) => Number(tokenId));
-// }
 
 /**
  * Call "owerOf" to retrieve the owner

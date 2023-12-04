@@ -27,7 +27,7 @@ import {
 } from "@wagmi/core";
 import TxStepper from "@/components/Bsd/TxStepper";
 import { useState } from "react";
-import { Producer, Recipient, Waste } from "@/types/types";
+import { Producer, Recipient, TxSteps, Waste } from "@/types/types";
 import { initMetadata, uploadToIpfs } from "@/utils/metadata";
 import QRCode from "qrcode";
 import { usePublicClient } from "wagmi";
@@ -39,6 +39,13 @@ type Props = {
   producer: Producer;
   recipient: Recipient;
 };
+
+const steps: TxSteps = [
+  { status: "idle", description: "Confirmer l'action" },
+  { status: "ipfs", description: "Upload sur IPFS" },
+  { status: "loading", description: "Transaction en attente" },
+  { status: "success", description: "Transaction completée" },
+];
 
 export default function Mint({
   isButtondisabled,
@@ -163,7 +170,7 @@ export default function Mint({
                   <AlertDescription>{error.description}</AlertDescription>
                 </Alert>
               )}
-              <TxStepper status={status} />
+              <TxStepper status={status} steps={steps}/>
               {qrCode && (
                 <Flex direction={"column"} gap={5}>
                   <Alert status="success">

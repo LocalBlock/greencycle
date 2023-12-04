@@ -2,7 +2,7 @@
 
 import { Roles } from "@/types/types";
 import { getRole } from "@/utils/user";
-import { createContext, useState } from "react";
+import { createContext } from "react";
 import { useAccount } from "wagmi";
 
 export const RoleContext = createContext<Roles | undefined>(undefined);

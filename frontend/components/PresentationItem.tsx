@@ -13,7 +13,7 @@ export default function PresentationItem({
 }) {
   return (
     <Box>
-      <Flex alignItems={"center"}>
+      <Flex alignItems={"center"} mb={1}>
         <PresentationIcon icon={icon} />
         <Heading as={"h3"} size={"md"} ml={3} color={"blue.400"}>
           {title}

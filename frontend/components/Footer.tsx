@@ -11,7 +11,7 @@ export default function Footer() {
       width={"100%"}
       justifyContent={"center"}
     >
-      <Text>A project from Finney promotion Alyra school made with&nbsp;</Text>
+      <Text>Un projet de la promotion Finney de l&apos;école blockchain Alyra fait avec&nbsp;</Text>
       <Icon mt={1} color={"red"} as={FaHeart} />
     </Flex>
   );

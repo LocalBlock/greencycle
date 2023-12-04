@@ -15,6 +15,8 @@ import {
   IconButton,
   useClipboard,
   SkeletonText,
+  Tooltip,
+  Box,
 } from "@chakra-ui/react";
 import {
   Address,
@@ -25,9 +27,13 @@ import {
   useBalance,
 } from "wagmi";
 import Image from "next/image";
-import { FaCopy, FaCircleCheck, FaWallet } from "react-icons/fa6";
-import { useContext } from "react";
-import { RoleContext } from "@/contexts/role-provider";
+import { FaCopy, FaCircleCheck, FaWallet, FaCircleInfo } from "react-icons/fa6";
+import { useContext, useEffect, useState } from "react";
+import { RoleContext } from "@/contexts/RoleProvider";
+import { getGrcTokenLock, getBalanceOf } from "@/utils/grc";
+import Lock from "../Grc/Lock";
+import Unlock from "../Grc/Unlock";
+import { ConstantsContext } from "@/contexts/ConstantsProvider";
 
 function shortAddress(address: Address) {
   return address.slice(0, 6) + "..." + address.slice(-4);
@@ -49,6 +55,25 @@ function ConnectedWallet() {
   const { disconnect } = useDisconnect();
   const { onCopy, hasCopied } = useClipboard(address!);
   const role = useContext(RoleContext);
+  const [grcToken, setGrcToken] = useState("");
+  const [grcTokenLock, setGrcTokenLock] = useState("");
+  const constants = useContext(ConstantsContext);
+
+  useEffect(() => {
+    const fetchGRCBalance = async () => {
+      setGrcToken(await getBalanceOf(address!));
+      setGrcTokenLock(await getGrcTokenLock(address!));
+    };
+
+    fetchGRCBalance();
+
+    window.addEventListener("grcLock", fetchGRCBalance);
+    window.addEventListener("grcUnlock", fetchGRCBalance);
+    return () => {
+      window.removeEventListener("grcLock", fetchGRCBalance); //Cleanup
+      window.removeEventListener("grcUnlock", fetchGRCBalance); //Cleanup
+    };
+  }, [address]);
 
   return (
     <Popover placement={"bottom-end"}>
@@ -86,18 +111,41 @@ function ConnectedWallet() {
         </PopoverHeader>
         <PopoverBody>
           <Text>Profil : {role ?? "Inconnu"}</Text>
-          <Text>GRC token : Soon™ 😏</Text>
+          <Text>
+            GreenCycle Token : <b>{grcToken} GRC</b>
+          </Text>
+          <Flex>
+            <Text>GRC bloqué</Text>
+            &nbsp;:&nbsp;
+            <Text color={Number(grcTokenLock) < constants?.vault.minLockAmount!? "red" : "orange.500"}>
+              <b>{grcTokenLock} GRC</b>
+            </Text>
+            &nbsp;
+            <Tooltip label={"Montant minimum : "+constants?.vault.minLockAmount} placement="top">
+              <Box>
+                <FaCircleInfo />
+              </Box>
+            </Tooltip>
+          </Flex>
+          <Flex justifyContent={"center"} mt={2} gap={2}>
+            <Lock currentLockAmount={grcTokenLock}/>
+            <Unlock currentLockAmount={grcTokenLock}/>
+
+          </Flex>
         </PopoverBody>
         <PopoverFooter>
-          <IconButton
-            icon={hasCopied ? <FaCircleCheck /> : <FaCopy />}
-            size={"xs"}
-            aria-label="copy"
-            onClick={onCopy}
-          />{" "}
-          <Button size={"xs"} onClick={() => disconnect()}>
-            Disconnect
-          </Button>
+          <Flex alignItems={"center"} gap={2}>
+            <IconButton
+              icon={hasCopied ? <FaCircleCheck /> : <FaCopy />}
+              size={"xs"}
+              aria-label="copy"
+              onClick={onCopy}
+            />
+            <Button size={"xs"} onClick={() => disconnect()}>
+              Disconnect
+            </Button>
+
+          </Flex>
         </PopoverFooter>
       </PopoverContent>
     </Popover>
@@ -105,8 +153,7 @@ function ConnectedWallet() {
 }
 
 function ConnectWallet() {
-  const { connect, connectors, isLoading } =
-    useConnect();
+  const { connect, connectors, isLoading } = useConnect();
   const metatmaskConnector = connectors[0];
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();

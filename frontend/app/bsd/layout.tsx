@@ -1,5 +1,5 @@
 "use client";
-import { RoleContext } from "@/contexts/role-provider";
+import { RoleContext } from "@/contexts/RoleProvider";
 import {
   Alert,
   AlertDescription,

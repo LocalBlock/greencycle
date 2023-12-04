@@ -15,7 +15,7 @@ export default function Home() {
   const { chain } = useNetwork();
 
   return (
-    <Box as="main">
+    <>
       {chain?.unsupported && (
         <Alert status="error" justifyContent={"center"}>
           <AlertIcon />
@@ -27,6 +27,6 @@ export default function Home() {
       )}
       <Hero />
       <Presentation />
-    </Box>
+    </>
   );
 }

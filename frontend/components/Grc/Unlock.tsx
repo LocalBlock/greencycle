@@ -13,14 +13,18 @@ import {
   AlertIcon,
   AlertTitle,
   Flex,
-  Image,
   FormControl,
-  Input,
-  FormLabel,
   FormHelperText,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
-import { BaseError, ContractFunctionRevertedError } from "viem";
-import { bsdContractConfig } from "@/contracts/BSD";
+import { BaseError, ContractFunctionRevertedError, parseEther } from "viem";
+
 import {
   prepareWriteContract,
   writeContract,
@@ -28,68 +32,56 @@ import {
 } from "@wagmi/core";
 import TxStepper from "@/components/Bsd/TxStepper";
 import { useState } from "react";
-import { Bsd, TxSteps } from "@/types/types";
-import { updateMetadataTransport, uploadToIpfs } from "@/utils/metadata";
-import { useAccount } from "wagmi";
 
-type Props = {
-  bsd: Bsd;
-};
+import { bsdContractConfig } from "@/contracts/BSD";
+
+import { FaUnlock } from "react-icons/fa6";
+
+import { TxSteps } from "@/types/types";
 
 const steps: TxSteps = [
   { status: "idle", description: "Confirmer l'action" },
-  { status: "ipfs", description: "Upload sur IPFS" },
   { status: "loading", description: "Transaction en attente" },
   { status: "success", description: "Transaction completée" },
 ];
 
-export default function Transport({ bsd }: Props) {
+export default function Lock({
+  currentLockAmount,
+}: {
+  currentLockAmount: string;
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [cid, setCid] = useState("");
+
   const [status, setStatus] = useState<
-    "idle" | "error" | "ipfs" | "success" | "loading"
+    "idle" | "error" | "approve" | "success" | "loading"
   >("idle");
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState({ title: "", description: "" });
-  const { address } = useAccount();
-  const [deliveryDate, setDeliveryDate] = useState(0);
 
-  const transport = async () => {
+  const [unlockAmount, setUnlockAmount] = useState(0);
+
+  const unlock = async () => {
     try {
-      // Update Metadata
-      const newMetadata = updateMetadataTransport(bsd.metadata, address!);
-
-      //Upload to ipfs
-      setStatus("ipfs");
-      const cid = await uploadToIpfs(newMetadata);
-      setCid(cid);
-
-      // Prepare Transaction
-      setStatus("loading");
-      const { request } = await prepareWriteContract({
+      // Prepare lock Transaction
+      const withdrawPrepare = await prepareWriteContract({
         address: bsdContractConfig.contractAddress,
         abi: bsdContractConfig.abi,
-        functionName: "transportWaste",
-        args: [BigInt(bsd.id), "ipfs://" + cid, BigInt(deliveryDate)],
+        functionName: "withdraw",
+        args: [parseEther(unlockAmount.toString())],
       });
 
-      // Write transaction
-      const { hash } = await writeContract(request);
-
+      // Write approve transaction
+      const withdrawWrite = await writeContract(withdrawPrepare.request);
       // Wait for transaction
-      const data = await waitForTransaction({
-        hash,
-      });
+      const withdrawTX = await waitForTransaction({ hash: withdrawWrite.hash });
+
+      // Send event
+      const event = new CustomEvent("grcUnlock");
+      console.log("Emit event : grcUnlock");
+      window.dispatchEvent(event);
 
       // Finish
       setStatus("success");
-
-      // Emit event with timeout
-      setTimeout(() => {
-        const event = new CustomEvent("transportStarted");
-        console.log("Emit event : transportStarted");
-        window.dispatchEvent(event);
-      }, 3000);
     } catch (error) {
       setIsError(true);
       setStatus("error");
@@ -109,6 +101,7 @@ export default function Transport({ bsd }: Props) {
         }
       } else {
         console.log("Unknown error");
+        console.log(error);
         const unknownError = error as Error;
         setError({
           title: unknownError.name,
@@ -119,7 +112,15 @@ export default function Transport({ bsd }: Props) {
   };
   return (
     <>
-      <Button onClick={onOpen}>Prise en charge du dechet</Button>
+      <Button
+        size={"xs"}
+        onClick={onOpen}
+        colorScheme={"green"}
+        leftIcon={<FaUnlock />}
+      >
+        Débloquer des GRC
+      </Button>
+
       <Modal
         isOpen={isOpen}
         onClose={() => {
@@ -131,7 +132,7 @@ export default function Transport({ bsd }: Props) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Transport du déchet</ModalHeader>
+          <ModalHeader>Débloquer des GRC</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex flexDirection={"column"} gap={4}>
@@ -145,33 +146,40 @@ export default function Transport({ bsd }: Props) {
                 </Alert>
               )}
               <TxStepper status={status} steps={steps} />
-              <FormControl>
-                <FormLabel>Date de livraison</FormLabel>
-                <Input
-                  placeholder="Select Date and Time"
-                  size="md"
-                  type="datetime-local"
-                  onChange={(e)=>setDeliveryDate(Math.floor(new Date(e.target.value).getTime()/1000))}
-                />
-                <FormHelperText>Veuillez indiquer la date de livaison estimée</FormHelperText>
-              </FormControl>
-              {status === "success" && (
-                <Flex direction={"column"} gap={5}>
-                  <Alert status="success">
-                    <AlertIcon />
-                    <AlertTitle>Bonne route</AlertTitle>
-                    <AlertDescription>
-                      Cette fenêtre va se fermer dans 3 secondes
-                    </AlertDescription>
-                  </Alert>
-                </Flex>
+              {status != "success" && (
+                <Alert status="info">
+                  <AlertIcon />
+                  <AlertDescription>
+                    GRC Bloqué : <b>{currentLockAmount}</b> GRC
+                  </AlertDescription>
+                </Alert>
+              )}
+              {status != "success" && (
+                <FormControl isRequired>
+                  <FormLabel>Montant</FormLabel>
+                  <InputGroup width={180}>
+                    <Input
+                      maxWidth={20}
+                      type="number"
+                      max={Number(currentLockAmount)}
+                      onChange={(e) => setUnlockAmount(Number(e.target.value))}
+                    />
+                    {/* eslint-disable-next-line react/no-children-prop */}
+                    <InputRightAddon children="GRC" />
+                  </InputGroup>
+                  <FormHelperText>
+                    Indiquez la nombre de GRC que vous voulez débloquer
+                  </FormHelperText>
+                </FormControl>
               )}
             </Flex>
           </ModalBody>
           <ModalFooter>
             <Button
               hidden={
-                status === "idle" || status === "ipfs" || status === "loading"
+                status === "idle" ||
+                status === "approve" ||
+                status === "loading"
               }
               mr={3}
               onClick={() => {
@@ -185,10 +193,10 @@ export default function Transport({ bsd }: Props) {
             <Button
               hidden={status === "success" || status === "error"}
               isDisabled={isError}
-              isLoading={status === "loading" || status === "ipfs"}
-              onClick={transport}
+              isLoading={status === "loading" || status === "approve"}
+              onClick={unlock}
             >
-              Prendre en charge
+              Débloquer
             </Button>
           </ModalFooter>
         </ModalContent>
