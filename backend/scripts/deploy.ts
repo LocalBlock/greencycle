@@ -49,6 +49,12 @@ async function exportContractConfig(
   );
 }
 
+/**
+ * Sleep function 
+ * @param ms Milliseconds
+ */
+const sleep = (ms:number) => new Promise(r => setTimeout(r, ms))
+
 async function main() {
   /**
    * ADDRESS PROVIDER CONTRACT
@@ -95,7 +101,7 @@ async function main() {
   if (network.name != "localhost") {
     console.log(`\x1B[32m[Verify your contract]\x1B[0m`);
     console.log(
-      `Command : \x1B[96myarn hardhat verify --network ${network.name} ${bsdContract.target}\x1B[0m`
+      `Command : \x1B[96myarn hardhat verify --network ${network.name} ${bsdContract.target} ${addressesProviderContract.target}\x1B[0m`
     );
   }
 
@@ -128,7 +134,7 @@ async function main() {
   if (network.name != "localhost") {
     console.log(`\x1B[32m[Verify your contract]\x1B[0m`);
     console.log(
-      `Command : \x1B[96myarn hardhat verify --network ${network.name} ${grcContract.target}\x1B[0m`
+      `Command : \x1B[96myarn hardhat verify --network ${network.name} ${grcContract.target} ${addressesProviderContract.target}\x1B[0m`
     );
   }
 
@@ -161,10 +167,11 @@ async function main() {
   if (network.name != "localhost") {
     console.log(`\x1B[32m[Verify your contract]\x1B[0m`);
     console.log(
-      `Command : \x1B[96myarn hardhat verify --network ${network.name} ${grcVaultContract.target}\x1B[0m`
+      `Command : \x1B[96myarn hardhat verify --network ${network.name} ${grcVaultContract.target} ${addressesProviderContract.target}\x1B[0m`
     );
   }
-
+  console.log("Wait 4sec before initialisation");
+  await sleep(4000);
   /**
    * CONTRACTS INITIALISATION
    */
