@@ -5,6 +5,11 @@ import "./interfaces/IGRC.sol";
 
 error insufficientLockAmount(uint needed);
 
+/**
+ * @title Vault for locking user token
+ * @author localblock@proton.me
+ * @notice This contract was design during Alyra school course, Finney promotion, DO NOT USE in Production
+ */
 contract GRCVault {
     // Constants
     uint256 public constant MIN_LOCK_AMOUNT = 10 ether;
@@ -50,10 +55,20 @@ contract GRCVault {
         return address(GRCToken);
     }
 
+    /**
+     * @notice Get Amount of locked token
+     * @param _user Address
+     */
     function balanceOf(address _user) external view returns (uint256) {
         return lockVault[_user];
     }
 
+    /**
+     * @notice Lock tokens in vault
+     * @dev Only BSD contract
+     * @param _user Address
+     * @param _amount Amount
+     */
     function lock(address _user, uint _amount) external onlyBsdContract {
         if (_amount < MIN_LOCK_AMOUNT)
             revert insufficientLockAmount(MIN_LOCK_AMOUNT);
@@ -63,14 +78,25 @@ contract GRCVault {
         emit tokenLock(_amount, _user);
     }
 
+    /**
+     * @notice Unlock tokens in vault
+     * @dev Only BSD contract
+     * @param _user Address
+     * @param _amount Amount
+     */
     function unlock(address _user, uint _amount) external onlyBsdContract {
         GRCToken.transfer(_user, _amount);
         lockVault[_user] = lockVault[_user] - _amount;
         emit tokenUnlock(_amount, _user);
     }
 
+    /**
+     * @notice Slash a user, burn token
+     * @dev Only BSD contract
+     * @param _user Address
+     * @param _amount Amount
+     */
     function slash(address _user, uint _amount) external onlyBsdContract {
-        //GRCToken.transfer(0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512, _amount); //a voir ou
         GRCToken.burn(_amount);
         lockVault[_user] = lockVault[_user] - _amount;
     }

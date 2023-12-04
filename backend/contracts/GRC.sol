@@ -7,6 +7,11 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "./interfaces/IAddressesProvider.sol";
 import "./interfaces/IBSD.sol";
 
+/**
+ * @title GRC Token Contract (ERC20)
+ * @author localblock@proton.me
+ * @notice This contract was design during Alyra school course, Finney promotion, DO NOT USE in Production
+ */
 contract GRC is ERC20,ERC20Burnable , ERC165 {
     //Errors
     error unauthorizedCaller();
@@ -37,10 +42,19 @@ contract GRC is ERC20,ERC20Burnable , ERC165 {
         BSDToken = IBSD(AddressesProvider.getBSDToken());
     }
 
+    /**
+     * @notice Return BSD contract address
+     */
     function getBSDTokenAddress() external view returns (address) {
         return address(BSDToken);
     }
 
+    /**
+     * @notice Mint token
+     * @dev only BSD Contract
+     * @param to to
+     * @param amount amount
+     */
     function mint(address to, uint256 amount) external onlyBsdContract {
         _mint(to, amount);
     }

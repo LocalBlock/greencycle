@@ -106,6 +106,11 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         return address(GRCVault);
     }
 
+    /**
+     * @notice Mint a new NFT 
+     * @param _uri URI for ipfs metadata
+     * @param _toRecipient Recipient
+     */
     function mint(
         string memory _uri,
         address _toRecipient
@@ -128,10 +133,21 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         emit toRecipient(_tokenId, _toRecipient);
     }
 
+    /**
+     * @notice Get bsdData from a tokenId
+     * @param _tokenId Token Id
+     */
     function getBsdData(uint256 _tokenId) external view returns (Bsd memory) {
         return bsdData[_tokenId];
     }
 
+    /**
+     * @notice Transport waste
+     * @dev Only transporter role 
+     * @param _tokenId Token Id
+     * @param _uri URI for ipfs metadata
+     * @param _deliveryDate Estimate delivery date timestamp in seconds
+     */
     function transportWaste(
         uint256 _tokenId,
         string memory _uri,
@@ -159,6 +175,12 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         bsdData[_tokenId].transporter.deliveryDate = _deliveryDate;
     }
 
+    /**
+     * @notice Recipient reject waste from transporter
+     * @dev Only recipient role
+     * @param _tokenId Token Id
+     * @param _uri URI for ipfs metadata
+     */
     function recipientReject(
         uint256 _tokenId,
         string memory _uri
@@ -195,6 +217,12 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         }
     }
 
+    /**
+     * @notice Recipient accept waste from transporter
+     * @dev Only recipient role
+     * @param _tokenId Token Id
+     * @param _uri URI for ipfs metadata
+     */
     function recipientAccept(
         uint256 _tokenId,
         string memory _uri
@@ -229,6 +257,12 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         }
     }
 
+    /**
+     * @notice Recipient proccess waste
+     * @dev Only recipient role
+     * @param _tokenId Token Id
+     * @param _uri URI for ipfs metadata
+     */
     function recipientProcess(
         uint256 _tokenId,
         string memory _uri
@@ -286,7 +320,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
     }
 
     /**
-     * @notice onboarding user give some token
+     * @notice onboarding user, give some token
      */
     function onboarding(address _addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
         GRCToken.mint(_addr, ONBOARDING_MINT_AMOUNT);
@@ -313,10 +347,18 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         return false;
     }
 
+    /**
+     * @notice Deposit amount to GRCVault contract
+     * @param _amount Amount
+     */
     function deposit(uint _amount) external {
         GRCVault.lock(msg.sender, _amount);
     }
 
+    /**
+     * @notice Withdraw amount from GRCVault contract
+     * @param _amount Amount
+     */
     function withdraw(uint _amount) external {
         GRCVault.unlock(msg.sender, _amount);
     }
@@ -328,7 +370,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         uint256 tokenId,
         address auth
     ) internal override(ERC721) returns (address) {
-        // Unauthorise external tranfert
+        // Prevent external tranfert
         if (!_hasKnownRole(to)) revert externalTransfertForbidden();
         return super._update(to, tokenId, auth);
     }
