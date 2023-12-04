@@ -886,7 +886,7 @@ describe("BSD Contract", () => {
             .connect(recipient)
             .recipientReject(0, "ipfs://CID_REJECTED")
         )
-          .to.emit(bsdContract, "transporterSlashed")
+          .to.emit(bsdContract, "userSlashed")
           .withArgs(transporter.address, parseEther("10"));
       });
       it("should change lock token slash transporter if delivery past", async () => {
@@ -1074,7 +1074,7 @@ describe("BSD Contract", () => {
             .connect(recipient)
             .recipientAccept(0, "ipfs://CID_ACCEPTED")
         )
-          .to.emit(bsdContract, "transporterSlashed")
+          .to.emit(bsdContract, "userSlashed")
           .withArgs(transporter.address, parseEther("10"));
       });
       it("should change lock token slash transporter if delivery past", async () => {
@@ -1225,7 +1225,7 @@ describe("BSD Contract", () => {
             .connect(recipient)
             .recipientProcess(0, "ipfs://CID_PROCESSED")
         )
-          .to.emit(bsdContract, "recipientSlashed")
+          .to.emit(bsdContract, "userSlashed")
           .withArgs(recipient.address, parseEther("10"));
       });
       it("should change lock token when slashing Recipient", async () => {

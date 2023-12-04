@@ -32,11 +32,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
 
     // Events
     event toRecipient(uint256 indexed tokenId, address indexed recipient);
-    event transporterSlashed(
-        address indexed shashedAddress,
-        uint256 indexed slashedAmount
-    );
-    event recipientSlashed(
+    event userSlashed(
         address indexed shashedAddress,
         uint256 indexed slashedAmount
     );
@@ -195,7 +191,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
                 .transporter
                 .walletAddress;
             GRCVault.slash(slashedAddress, SLASH_AMOUNT);
-            emit transporterSlashed(slashedAddress, SLASH_AMOUNT);
+            emit userSlashed(slashedAddress, SLASH_AMOUNT);
         }
     }
 
@@ -229,7 +225,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
                 .transporter
                 .walletAddress;
             GRCVault.slash(slashedAddress, SLASH_AMOUNT);
-            emit transporterSlashed(slashedAddress, SLASH_AMOUNT);
+            emit userSlashed(slashedAddress, SLASH_AMOUNT);
         }
     }
 
@@ -258,7 +254,7 @@ contract BSD is ERC721, ERC721URIStorage, AccessControl {
         if (isRecipientSlashed(bsdData[_tokenId].recipient.wasteDecisionDate)) {
             address slashedAddress = bsdData[_tokenId].recipient.walletAddress;
             GRCVault.slash(slashedAddress, SLASH_AMOUNT);
-            emit recipientSlashed(slashedAddress, SLASH_AMOUNT);
+            emit userSlashed(slashedAddress, SLASH_AMOUNT);
         }
 
         // Reward
