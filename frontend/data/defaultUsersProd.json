@@ -1,0 +1,140 @@
+{
+  "producers": [
+    {
+      "company": {
+        "name": "Carrefour (Xavier)",
+        "siret": "65201405100732",
+        "address": "93 Avenue De Paris",
+        "postalCode": 91300,
+        "city": "Massy",
+        "infos": "Commerce de détail et de gros à prédominance alimentaire"
+      },
+      "walletAddress": "0x72e617BbeF5Fb0546d0195e46d519415dd2199dB"
+    },
+    {
+      "company": {
+        "name": "Bosch (Guillaume)",
+        "siret": "34017577700119",
+        "address": "32 Avenue Michelet",
+        "postalCode": 93400,
+        "city": "Saint Ouen sur Seine",
+        "infos": "Commerce de gros d'équipements automobiles"
+      },
+      "walletAddress": "0x4e8A0F11e60243931b0e355f0D55F1FBD5C54A01"
+    },
+    {
+      "company": {
+        "name": "Renault (David)",
+        "siret": "44163946500091",
+        "address": "112 bis Avenue Du Général Leclerc",
+        "postalCode": 92100,
+        "city": "Boulogne Billancourt",
+        "infos": "Commerce automobile"
+      },
+      "walletAddress": "0x7e0C32de308aDD109762Cf02977B30CBc69618B2"
+    },
+    {
+      "company": {
+        "name": "Lafarge (Julien)",
+        "siret": "422288092",
+        "address": "14-16 boulevard Garibaldi",
+        "postalCode": 92130,
+        "city": "Issy-les-Moulineaux",
+        "infos": "Un gros pollueur"
+      },
+      "walletAddress": "0xa3AE9c48639e0B9e635644B4Ab8C4782A4C7a9D4"
+    }
+  ],
+  "transporters": [
+    {
+      "company": {
+        "name": "Geodis (Xavier)",
+        "siret": "54208432200677",
+        "address": "26 quai Charles Pasqua",
+        "postalCode": 92300,
+        "city": "Levallois-Perret",
+        "infos": "Transport"
+      },
+      "walletAddress": "0x9c67BcFEA0805ccE10c3eeE7740411ea1504e583"
+    },
+    {
+      "company": {
+        "name": "Adnot Recylage (Guillaume)",
+        "siret": "32696490500011",
+        "address": "Rue Gabriel Péri",
+        "postalCode": 10100,
+        "city": "Romilly sur Seine",
+        "infos": "Location de bennes"
+      },
+      "walletAddress": "0x49EB2163Ef72A84926EaA0fF9ce7Da7a739D635d"
+    },
+    {
+      "company": {
+        "name": "Lefeuvre Transports (David)",
+        "siret": "45001275200017",
+        "address": "7 lieu-dit Fumecon",
+        "postalCode": 61100,
+        "city": "La Selle-la-Forge",
+        "infos": "Transport express"
+      },
+      "walletAddress": "0x706747f91825fD210A6033a071A5301A4A3E5421"
+    },
+    {
+      "company": {
+        "name": "SNCF (Julien)",
+        "siret": "55204944776279",
+        "address": "2, Place aux Étoiles",
+        "postalCode": 93200,
+        "city": "Saint-Denis",
+        "infos": "Les rails c'est bien aussi"
+      },
+      "walletAddress": "0x1786ed17A68B0Fe8477A51C361C6DEc6D02207bc"
+    }
+  ],
+  "recipients": [
+    {
+      "company": {
+        "name": "Veolia (Xavier)",
+        "siret": "57222103401230",
+        "address": "425 Rue du Petit Mas",
+        "postalCode": 84000,
+        "city": "Avignon",
+        "infos": "Recyclage & Valorisation des Déchets"
+      },
+      "walletAddress": "0x99a67164C70fc9e6F9e2d97545F5a3B5FECF4F48"
+    },
+    {
+      "company": {
+        "name": "CHIMIREC (Guillaume)",
+        "siret": "39128259700031",
+        "address": "2 rue Pierre Fixot",
+        "postalCode": 93600,
+        "city": "Aulnay-sous-Bois",
+        "infos": "Collecte et de traitement des déchets industriels"
+      },
+      "walletAddress": "0xDdd0787C99e5Be97e573be94065170E317a5AB8A"
+    },
+    {
+      "company": {
+        "name": "Derichebourg (David)",
+        "siret": "35298060100046",
+        "address": "119 Av. du Général Michel Bizot",
+        "postalCode": 75012,
+        "city": "Paris",
+        "infos": "Collecte, traitement et élimination des déchets"
+      },
+      "walletAddress": "0x7A5FD711235AE5B65D4e8737bf7019264479cCDE"
+    },
+    {
+      "company": {
+        "name": "Suez (Julien)",
+        "siret": "901644989",
+        "address": "16, place de l’Iris",
+        "postalCode": 92400,
+        "city": "Courbevoie",
+        "infos": "Gestion des déchets dangereux"
+      },
+      "walletAddress": "0x8E46965CDC775EF99cF0e085b4fd27968299BA7B"
+    }
+  ]
+}

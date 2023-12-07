@@ -1,0 +1,107 @@
+{
+  "producers": [
+    {
+      "company": {
+        "name": "Carrefour",
+        "siret": "65201405100732",
+        "address": "93 Avenue De Paris",
+        "postalCode": 91300,
+        "city": "Massy",
+        "infos": "Commerce de détail et de gros à prédominance alimentaire"
+      },
+      "walletAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    },
+    {
+      "company": {
+        "name": "Bosch",
+        "siret": "34017577700119",
+        "address": "32 Avenue Michelet",
+        "postalCode": 93400,
+        "city": "Saint Ouen sur Seine",
+        "infos": "Commerce de gros d'équipements automobiles"
+      },
+      "walletAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    },
+    {
+      "company": {
+        "name": "Renault",
+        "siret": "44163946500091",
+        "address": "112 bis Avenue Du Général Leclerc",
+        "postalCode": 92100,
+        "city": "Boulogne Billancourt",
+        "infos": "Commerce automobile"
+      },
+      "walletAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    }
+  ],
+  "transporters": [
+    {
+      "company": {
+        "name": "Geodis",
+        "siret": "54208432200677",
+        "address": "26 quai Charles Pasqua",
+        "postalCode": 92300,
+        "city": "Levallois-Perret",
+        "infos": "Transport"
+      },
+      "walletAddress": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+    },
+    {
+      "company": {
+        "name": "Adnot Recylage",
+        "siret": "32696490500011",
+        "address": "Rue Gabriel Péri",
+        "postalCode": 10100,
+        "city": "Romilly sur Seine",
+        "infos": "Location de bennes"
+      },
+      "walletAddress": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+    },
+    {
+      "company": {
+        "name": "Lefeuvre Transports",
+        "siret": "45001275200017",
+        "address": "7 lieu-dit Fumecon",
+        "postalCode": 61100,
+        "city": "La Selle-la-Forge",
+        "infos": "Transport express"
+      },
+      "walletAddress": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+    }
+  ],
+  "recipients": [
+    {
+      "company": {
+        "name": "Veolia",
+        "siret": "57222103401230",
+        "address": "425 Rue du Petit Mas",
+        "postalCode": 84000,
+        "city": "Avignon",
+        "infos": "Recyclage & Valorisation des Déchets"
+      },
+      "walletAddress": "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
+    },
+    {
+      "company": {
+        "name": "CHIMIREC",
+        "siret": "39128259700031",
+        "address": "2 rue Pierre Fixot",
+        "postalCode": 93600,
+        "city": "Aulnay-sous-Bois",
+        "infos": "Collecte et de traitement des déchets industriels"
+      },
+      "walletAddress": "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
+    },
+    {
+      "company": {
+        "name": "Derichebourg",
+        "siret": "35298060100046",
+        "address": "119 Av. du Général Michel Bizot",
+        "postalCode": 75012,
+        "city": "Paris",
+        "infos": "Collecte, traitement et élimination des déchets"
+      },
+      "walletAddress": "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
+    }
+  ]
+}

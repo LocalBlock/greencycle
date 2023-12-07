@@ -1,0 +1,84 @@
+[
+  { "code": "D1", "description": "Dépôt sur ou dans le sol" },
+  { "code": "D2", "description": "Traitement en milieu terrestre" },
+  { "code": "D3", "description": "Injection en profondeur" },
+  { "code": "D4", "description": "Lagunage " },
+  { "code": "D5", "description": "Mise en décharge spécialement aménagée" },
+  {
+    "code": "D6",
+    "description": "Rejet dans le milieu aquatique, sauf l'immersion"
+  },
+  {
+    "code": "D7",
+    "description": "Immersion, y compris enfouissement dans le sous-sol marin"
+  },
+  {
+    "code": "D8",
+    "description": "Traitement biologique non spécifié ailleurs dans la présente annexe, aboutissant à des composés ou à des mélanges qui sont éliminés selon un des procédés numérotés D1 à D12."
+  },
+  {
+    "code": "D9",
+    "description": "Traitement physico-chimique non spécifié ailleurs dans la présente annexe, aboutissant à des composés ou à des mélanges qui sont éliminés selon l'un des procédés numérotés D1 à D12"
+  },
+  { "code": "D10", "description": "Incinération à terre" },
+  { "code": "D11", "description": "Incinération en mer" },
+  { "code": "D12", "description": "Stockage permanent" },
+  {
+    "code": "D13",
+    "description": "Regroupement ou mélange préalablement à l'une des opérations numérotées D1 à D12"
+  },
+  {
+    "code": "D14",
+    "description": "Reconditionnement préalablement à l'une des opérations numérotées D1 à D13"
+  },
+  {
+    "code": "D15",
+    "description": "Stockage préalablement à l'une des opérations numérotées D1 à D14"
+  },
+  {
+    "code": "R1",
+    "description": "Utilisation principale comme combustible ou autre moyen de produire de l'énergie"
+  },
+  { "code": "R2", "description": "Récupération ou régénération des solvants" },
+  {
+    "code": "R3",
+    "description": "Recyclage ou récupération des substances organiques qui ne sont pas utilisées comme solvants"
+  },
+  {
+    "code": "R4",
+    "description": "Recyclage ou récupération des métaux et des composés métalliques"
+  },
+  {
+    "code": "R5",
+    "description": "Recyclage ou récupération d'autres matières inorganiques"
+  },
+  { "code": "R6", "description": "Régénération des acides ou des bases" },
+  {
+    "code": "R7",
+    "description": "Récupération des produits servant à capter les polluants"
+  },
+  {
+    "code": "R8",
+    "description": "Récupération des produits provenant des catalyseurs."
+  },
+  {
+    "code": "R9",
+    "description": "Régénération ou autres réemplois des huiles"
+  },
+  {
+    "code": "R10",
+    "description": "Epandage sur le sol au profit de l'agriculture ou de l'écologie"
+  },
+  {
+    "code": "R11",
+    "description": "Utilisation de déchets résiduels obtenus à partir de l'une des opérations numérotées R1 à R10"
+  },
+  {
+    "code": "R12",
+    "description": "Echange de déchets en vue de les soumettre à l'une des opérations numérotées R1 à R11"
+  },
+  {
+    "code": "R13",
+    "description": "Stockage de déchets préalablement à l'une des opérations numérotées R1 à R12"
+  }
+]

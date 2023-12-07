@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "dotenv/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
+import "hardhat-contract-sizer"
 
 //Secrets
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || ""
@@ -36,6 +37,8 @@ const config: HardhatUserConfig = {
   gasReporter: {
     coinmarketcap: COINMARKETCAP_API_KEY,
     currency: "EUR",
+    token:"MATIC",
+    gasPriceApi:"https://api.polygonscan.com/api?module=proxy&action=eth_gasPrice",
     enabled: false,
   },
   solidity: "0.8.20",

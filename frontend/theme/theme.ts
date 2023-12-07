@@ -33,11 +33,11 @@ const colors = {
 const semanticTokens = {
   colors: {
     "chakra-body-bg": { _light: "brand.50", _dark: "gray.800" },
-    // presentation: {
-    //   background: { _light: "gray.200", _dark: "gray.700" },
-    //   icon: { _light: "cyan.600", _dark: "cyan.200" },
-    //   iconBackground: { _light: "blue.200", _dark: "blue.700" },
-    // },
+    presentation: {
+      background: { _light: "brand.100", _dark: "brand.600" },
+      icon: { _light: "cyan.600", _dark: "cyan.200" },
+      iconBackground: { _light: "brand.200", _dark: "brand.700" },
+    },
   },
 };
 

@@ -8,14 +8,10 @@ export default function Footer() {
     <Flex
       as={"footer"}
       py={5}
-      position={"fixed"}
-      bottom={0}
-      left={"50%"}
-      transform={"translateX(-50%)"}
-      alignItems={"center"}
-      width={"max-content"}
+      width={"100%"}
+      justifyContent={"center"}
     >
-      <Text>A project from Finney promotion Alyra school made with&nbsp;</Text>
+      <Text>Un projet de la promotion Finney de l&apos;école blockchain Alyra fait avec&nbsp;</Text>
       <Icon mt={1} color={"red"} as={FaHeart} />
     </Flex>
   );
